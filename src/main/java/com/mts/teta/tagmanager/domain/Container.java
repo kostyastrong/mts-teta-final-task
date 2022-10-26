@@ -42,7 +42,7 @@ public class Container {
   @NotNull(message = "App field is null but container should always reference some App")
   private App app;
 
-  @OneToMany(fetch = LAZY, mappedBy = "trigger")
+  @OneToMany(fetch = LAZY, mappedBy = "container")
   private List<Trigger> triggers = new ArrayList<>();
 
   public static Container newContainer(String name, App app) {

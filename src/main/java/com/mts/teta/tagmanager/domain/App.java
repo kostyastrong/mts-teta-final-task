@@ -34,7 +34,7 @@ public class App {
   @NotNull(message = "App name is null")
   private String name;
 
-  @OneToMany(fetch = LAZY, mappedBy = "container")
+  @OneToMany(fetch = LAZY, mappedBy = "app")
   private List<Container> containers = new ArrayList<>();
 
   public static App newApp(String name) {

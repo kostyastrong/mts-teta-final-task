@@ -67,7 +67,8 @@ public class Trigger {
     SET_INTERVAL
   }
 
-  public static Trigger newTrigger(String name, Container container, TriggerAttributes triggerAttributes) {
+  public static Trigger newTrigger(String name, Container container,
+      TriggerAttributes triggerAttributes) {
     final var trigger = new Trigger();
     trigger.setName(name);
     trigger.setContainer(container);
@@ -97,6 +98,7 @@ public class Trigger {
       // Это как раз то сообщение, которое при срабатывание триггера и отправляется на бэкенд
       // и в итоге попадает в аналитическое хранилище.
       // Для простоты здесь оно задано статически. Но вы можете подумать, как сюда добавить динамику
+      // При формировании итогового JS-скрипта (смотри ContainerController) сюда могут подставляться также и другие значения.
       private final Map<String, Object> messageToSend;
 
       @JsonCreator
