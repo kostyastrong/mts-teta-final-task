@@ -79,13 +79,25 @@ public class ContainerController {
             setInterval(%s, function() {
                 console.log("Trigger %s is called");
                 // здесь отправляется сообщение на бэкенд
-                fetch('https://mts.analytics-backend.ru/api/message', {
+                // Endpoint, как видите, захардкожен. При дефолтных настройках все будет работать.
+                // Но лучше, если это поле будет конфигурируемым
+                fetch('http://localhost:8080/api/message', {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
                       'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(%ы)
+                    // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
+                    body: JSON.stringify({
+                        "userId": "user_id",
+                        "event": "set_interval",
+                        "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
+                        // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
+                        "app_name": "",
+                        "app_id": ""
+                        // в event_params как раз сохряняет trigger.attributes
+                        "event_params": %s
+                    })
                   })
             })
             """,
