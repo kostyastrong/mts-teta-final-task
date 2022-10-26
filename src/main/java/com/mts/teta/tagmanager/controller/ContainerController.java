@@ -4,6 +4,7 @@ import static com.mts.teta.tagmanager.domain.Trigger.TriggerType.SET_INTERVAL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mts.teta.enricher.cache.UserInfoRepository;
 import com.mts.teta.tagmanager.controller.dto.ContainerCreatedResponse;
 import com.mts.teta.tagmanager.controller.dto.ContainerResponse;
 import com.mts.teta.tagmanager.domain.Container;
@@ -11,6 +12,7 @@ import com.mts.teta.tagmanager.domain.Trigger;
 import com.mts.teta.tagmanager.repository.AppRepository;
 import com.mts.teta.tagmanager.repository.ContainerRepository;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class ContainerController {
   private final AppRepository appRepository;
   private final ContainerRepository containerRepository;
   private final ObjectMapper objectMapper;
+  private final UserInfoRepository userInfoRepository;
 
   // получить список контейнеров вместе с их триггерами по ID-шнику приложения
   // GET /api/container/app/1
@@ -80,6 +83,7 @@ public class ContainerController {
       );
     }
     final var attributes = trigger.getAttributes().getSetTimeout();
+    final var userIds = userInfoRepository.findAllUserIds();
     return """
         // дополнительно оборачивание в function - хак, который позволяет
         // выполнить код сразу при загрузке страницы
@@ -105,16 +109,17 @@ public class ContainerController {
                   method: 'POST',
                   mode: 'no-cors',
                   headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                   },
                   // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                   body: JSON.stringify({
-                      "userId": "user_id",
+                      "userId": "{userId}",
                       "event": "set_interval",
                       "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
                       // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
-                      "app_name": "",
-                      "app_id": "",
+                      "app_name": "{appName}",
+                      "app_id": {appId},
                       // в event_params как раз сохраняет trigger.attributes
                       "event_params": {attributes}
                   })
@@ -129,6 +134,16 @@ public class ContainerController {
                 attributes.getMessageToSend()
             )
         )
-        .replaceAll("\\{delayMillis}", String.valueOf(attributes.getDelayMillis()));
+        .replaceAll("\\{delayMillis}", String.valueOf(attributes.getDelayMillis()))
+        .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
+        .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
+        .replaceAll(
+            "\\{userId}",
+            // Здесь простая реализация: подставляем случайный userId из всех существующих.
+            // Вы можете доработать и придумать что-то более интеллектуальное.
+            // Например, определенные userId будут относиться к определенным приложениям и триггер будет выбирать
+            // значение из соответствующего множества
+            userIds.get(ThreadLocalRandom.current().nextInt(userIds.size()))
+        );
   }
 }
