@@ -67,12 +67,17 @@ public class Trigger {
     SET_INTERVAL
   }
 
-  public static Trigger newTrigger(String name, Container container,
-      TriggerAttributes triggerAttributes) {
+  public static Trigger newTrigger(
+      String name,
+      Container container,
+      TriggerType type,
+      TriggerAttributes triggerAttributes
+  ) {
     final var trigger = new Trigger();
     trigger.setName(name);
     trigger.setContainer(container);
     trigger.setAttributes(triggerAttributes);
+    trigger.setType(type);
     return trigger;
   }
 

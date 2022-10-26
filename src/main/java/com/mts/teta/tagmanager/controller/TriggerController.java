@@ -29,7 +29,7 @@ public class TriggerController {
   // Удалить Trigger по ID-шнику
   // DELETE /api/trigger/1
   @DeleteMapping("/{triggerId}")
-  public void deleteTrigger(@NotNull@PathVariable long triggerId) {
+  public void deleteTrigger(@NotNull @PathVariable long triggerId) {
     triggerRepository.deleteById(triggerId);
   }
 
@@ -47,7 +47,12 @@ public class TriggerController {
   ) {
     final var container = containerRepository.findById(containerId).orElseThrow();
     final var trigger = triggerRepository.save(
-        Trigger.newTrigger(request.getName(), container, request.getAttributes()));
+        Trigger.newTrigger(
+            request.getName(),
+            container,
+            request.getType(),
+            request.getAttributes()
+        ));
     return new TriggerCreated(trigger.getId());
   }
 }
