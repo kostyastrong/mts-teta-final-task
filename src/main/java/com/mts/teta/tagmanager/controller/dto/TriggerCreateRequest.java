@@ -3,14 +3,17 @@ package com.mts.teta.tagmanager.controller.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.mts.teta.tagmanager.domain.Trigger.TriggerAttributes;
 import com.mts.teta.tagmanager.domain.Trigger.TriggerType;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class TriggerCreateRequest {
 
+  @NotNull
   private final String name;
+  @NotNull
   private final TriggerType type;
+  @NotNull
   private final TriggerAttributes attributes;
 
   @JsonCreator

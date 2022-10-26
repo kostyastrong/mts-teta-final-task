@@ -5,8 +5,10 @@ import com.mts.teta.tagmanager.controller.dto.AppResponse;
 import com.mts.teta.tagmanager.domain.App;
 import com.mts.teta.tagmanager.repository.AppRepository;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/app")
 @RequiredArgsConstructor
+@Validated
 public class AppController {
 
   private final AppRepository appRepository;
@@ -34,7 +37,7 @@ public class AppController {
   // POST /api/app?name=appName
   @PostMapping
   @Transactional
-  public AppCreatedResponse createApp(@RequestParam String name) {
+  public AppCreatedResponse createApp(@NotNull @RequestParam String name) {
     final var app = appRepository.save(App.newApp(name));
     return new AppCreatedResponse(app.getId());
   }

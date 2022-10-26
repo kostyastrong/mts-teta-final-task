@@ -5,8 +5,11 @@ import com.mts.teta.tagmanager.controller.dto.TriggerCreated;
 import com.mts.teta.tagmanager.domain.Trigger;
 import com.mts.teta.tagmanager.repository.ContainerRepository;
 import com.mts.teta.tagmanager.repository.TriggerRepository;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/trigger")
 @RequiredArgsConstructor
+@Validated
 public class TriggerController {
 
   private final ContainerRepository containerRepository;
@@ -25,7 +29,7 @@ public class TriggerController {
   // Удалить Trigger по ID-шнику
   // DELETE /api/trigger/1
   @DeleteMapping("/{triggerId}")
-  public void deleteTrigger(@PathVariable long triggerId) {
+  public void deleteTrigger(@NotNull@PathVariable long triggerId) {
     triggerRepository.deleteById(triggerId);
   }
 
@@ -38,8 +42,8 @@ public class TriggerController {
   @PostMapping("/container/{containerId}")
   @Transactional
   public TriggerCreated createTrigger(
-      @PathVariable long containerId,
-      @RequestBody TriggerCreateRequest request
+      @NotNull @PathVariable long containerId,
+      @NotNull @Valid @RequestBody TriggerCreateRequest request
   ) {
     final var container = containerRepository.findById(containerId).orElseThrow();
     final var trigger = triggerRepository.save(

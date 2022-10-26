@@ -12,9 +12,12 @@ import com.mts.teta.tagmanager.repository.AppRepository;
 import com.mts.teta.tagmanager.repository.ContainerRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/container")
 @RequiredArgsConstructor
+@CrossOrigin("*")
+@Validated
 public class ContainerController {
 
   private final AppRepository appRepository;
@@ -34,7 +39,7 @@ public class ContainerController {
   // получить список контейнеров вместе с их триггерами по ID-шнику приложения
   // GET /api/container/app/1
   @GetMapping("/app/{appId}")
-  public List<ContainerResponse> getContainers(@PathVariable long appId) {
+  public List<ContainerResponse> getContainers(@NotNull @PathVariable long appId) {
     return containerRepository.findAllByAppId(appId)
         .stream()
         .map(ContainerResponse::new)
@@ -56,7 +61,7 @@ public class ContainerController {
 
   @GetMapping(value = "/{containerId}/jsFile", produces = "text/javascript")
   @Transactional
-  public byte[] getContainerAsJsFile(@PathVariable long containerId) {
+  public byte[] getContainerAsJsFile(@NotNull@PathVariable long containerId) {
     final var container = containerRepository.findById(containerId).orElseThrow();
     final var jsFile = container.getTriggers()
         .stream()
@@ -95,7 +100,7 @@ public class ContainerController {
                         // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
                         "app_name": "",
                         "app_id": ""
-                        // в event_params как раз сохряняет trigger.attributes
+                        // в event_params как раз сохраняет trigger.attributes
                         "event_params": %s
                     })
                   })
