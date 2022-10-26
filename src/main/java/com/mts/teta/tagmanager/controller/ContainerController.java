@@ -59,9 +59,9 @@ public class ContainerController {
     return new ContainerCreatedResponse(container.getId());
   }
 
-  @GetMapping(value = "/{containerId}/jsFile", produces = "text/javascript")
+  @GetMapping(value = "/{containerId}/jsFile", produces = "text/javascript;charset=UTF-8")
   @Transactional
-  public byte[] getContainerAsJsFile(@NotNull@PathVariable long containerId) {
+  public byte[] getContainerAsJsFile(@NotNull @PathVariable long containerId) {
     final var container = containerRepository.findById(containerId).orElseThrow();
     final var jsFile = container.getTriggers()
         .stream()
@@ -80,38 +80,55 @@ public class ContainerController {
       );
     }
     final var attributes = trigger.getAttributes().getSetTimeout();
-    return String.format("""
-            setInterval(%s, function() {
-                console.log("Trigger %s is called");
-                // здесь отправляется сообщение на бэкенд
-                // Endpoint, как видите, захардкожен. При дефолтных настройках все будет работать.
-                // Но лучше, если это поле будет конфигурируемым
-                fetch('http://localhost:8080/api/message', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
-                    body: JSON.stringify({
-                        "userId": "user_id",
-                        "event": "set_interval",
-                        "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
-                        // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
-                        "app_name": "",
-                        "app_id": ""
-                        // в event_params как раз сохраняет trigger.attributes
-                        "event_params": %s
-                    })
+    return """
+        // дополнительно оборачивание в function - хак, который позволяет
+        // выполнить код сразу при загрузке страницы
+        (function() {
+          console.log("Trigger {triggerName} is activated");
+          /*
+            В данном случае, никаких дополнительных листенеров не нужно, потому что мы просто регистриуем функцию
+            через setInterval, которая периодически выполняется.
+            Если же вы, например, захотите отслеживать события клика, или скролла, то вам нужно будет добавить
+            соответствующие слушатели:
+            
+            document.addEventListener('click', function() {...});
+            document.addEventListener('scroll', function() {...});
+            
+            и так далее
+          */
+          setInterval(function() {
+              console.log("Trigger {triggerName} is performing the action");
+              // здесь отправляется сообщение на бэкенд
+              // Endpoint, как видите, захардкожен. При дефолтных настройках все будет работать.
+              // Но лучше, если это поле будет конфигурируемым
+              fetch('http://localhost:8080/api/message', {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
+                  body: JSON.stringify({
+                      "userId": "user_id",
+                      "event": "set_interval",
+                      "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
+                      // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
+                      "app_name": "",
+                      "app_id": "",
+                      // в event_params как раз сохраняет trigger.attributes
+                      "event_params": {attributes}
                   })
-            })
-            """,
-        attributes.getDelayMillis(),
-        trigger.getName(),
-        // Здесь мы преобразуем Map<String, Object> в JSON, который и подставится в JSON.stringify
-        objectMapper.writeValueAsString(
-            attributes.getMessageToSend()
+              })
+          }, {delayMillis})
+        })()
+        """.replaceAll("\\{triggerName}", trigger.getName())
+        .replaceAll(
+            "\\{attributes}",
+            // Здесь мы преобразуем Map<String, Object> в JSON, который и подставится в JSON.stringify
+            objectMapper.writeValueAsString(
+                attributes.getMessageToSend()
+            )
         )
-    );
+        .replaceAll("\\{delayMillis}", String.valueOf(attributes.getDelayMillis()));
   }
 }
