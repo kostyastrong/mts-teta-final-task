@@ -1,0 +1,33 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+  <changeSet author="Default Author" id="1">
+    <sql>
+      CREATE TABLE app
+      (
+        id   BIGSERIAL PRIMARY KEY,
+        name VARCHAR(200) NOT NULL
+      );
+
+      CREATE TABLE container
+      (
+        id     BIGSERIAL PRIMARY KEY,
+        name   VARCHAR(200)               NOT NULL,
+        app_id BIGINT REFERENCES app (id) NOT NULL
+      );
+
+      CREATE TABLE trigger
+      (
+        id         BIGSERIAL PRIMARY KEY,
+        name       VARCHAR(200)                     NOT NULL,
+        type       VARCHAR(20)                      NOT NULL,
+        attributes JSONB                            NOT NULL,
+        container_id  BIGINT REFERENCES container (id) NOT NULL
+      );
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>
