@@ -34,7 +34,7 @@ docker run --rm -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PA
    смотри [ContainerController.getContainerAsJsFile](src/main/java/com/mts/teta/tagmanager/controller/ContainerController.java))
    для получения Javascript-файла, который можно встроить в веб-сайт. Для простоты в репозитории
    также есть [index.html](index.html). Достаточно просто открыть его в браузере как файл (не
-   обязательно даже подключать веб-сервер), чтобы события начали отправляться.
+   обязательно даже подключать веб-сервер), чтобы события начали отправляться. Но перед этим нужно создать App, Container и Trigger. Про swagger написано ниже.
 2. [MessageController](src/main/java/com/mts/teta/enricher/controller/MessageController.java)
    принимает сообщение и обогащает его, делегируя
    вызов [EnricherService](src/main/java/com/mts/teta/enricher/process/EnricherService.java).
