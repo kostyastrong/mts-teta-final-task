@@ -37,7 +37,7 @@ public class TriggerController {
   /*
    * POST /api/trigger/container/1
    *
-   * { "type": "SET_INTERVAL", "attributes": { ... }, "name": "triggerName" }
+   * { "type": "SET_INTERVAL", "attributes": { "setTimeout": { "delayMillis": 0, "messageToSend": { "key": "value" } } }, "name": "triggerName" }
    * */
   @PostMapping("/container/{containerId}")
   @Transactional
