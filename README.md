@@ -11,7 +11,7 @@ Docker-команды:
 docker run --name mts-teta-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=mts-teta-database -p 5432:5432 -d postgres
 
 # Clickhouse
-docker run --rm -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PASSWORD=password -p 8123:8123 -d yandex/clickhouse-server
+docker run -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PASSWORD=password -p 8123:8123 -d yandex/clickhouse-server
 ```
 
 К Postgres можно цепляться через [DBeaver](https://dbeaver.io/). К Clickhouse тоже, но также
