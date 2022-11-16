@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -54,6 +56,7 @@ public class Trigger {
   @Type(type = "json")
   @Column(columnDefinition = "jsonb")
   @NotNull(message = "Trigger attributes cannot be null")
+  @Valid
   private TriggerAttributes attributes;
 
   @ManyToOne(fetch = LAZY)
@@ -87,6 +90,8 @@ public class Trigger {
     // эти параметры выставляем, если тип триггера SET_INTERVAL
     // соответственно, если вы добавите новые типы, нужно будет для них сделать и новые параметры.
     // При этом предполагаем, что остальные в этом случае равны null
+    @NotNull(message = "SetTimeout cannot be null")
+    @Valid
     private final SetTimeout setTimeout;
 
     @JsonCreator
@@ -99,11 +104,13 @@ public class Trigger {
     @Getter
     public static class SetTimeout {
 
+      @Min(value = 1, message = "Delay millis cannot be less than {value} but actual value is ${validatedValue}")
       private final int delayMillis;
       // Это как раз то сообщение, которое при срабатывание триггера и отправляется на бэкенд
       // и в итоге попадает в аналитическое хранилище.
       // Для простоты здесь оно задано статически. Но вы можете подумать, как сюда добавить динамику
       // При формировании итогового JS-скрипта (смотри ContainerController) сюда могут подставляться также и другие значения.
+      @NotNull(message = "MessageToSend cannot be nyll")
       private final Map<String, Object> messageToSend;
 
       @JsonCreator
