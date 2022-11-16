@@ -19,6 +19,13 @@ docker run -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PASSWOR
 . Обратите внимание, что в web-интерфейса Clickhouse в правом верхнем углу нужно вписать логин и
 пароль.
 
+Чтобы посмотреть, какие данные записались в Clickhouse, сделайте запрос:
+
+```sql
+SELECT *
+FROM db.event
+```
+
 Если вы выполняете Docker-команды по умолчанию, не меняя пользователей, названия баз и порты, то
 достаточно просто запустить приложение через [main](src/main/java/com/mts/teta/DemoApplication.java)
 . Иначе же нужно также предварительно поправить конфиги
@@ -34,7 +41,8 @@ docker run -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PASSWOR
    смотри [ContainerController.getContainerAsJsFile](src/main/java/com/mts/teta/tagmanager/controller/ContainerController.java))
    для получения Javascript-файла, который можно встроить в веб-сайт. Для простоты в репозитории
    также есть [index.html](index.html). Достаточно просто открыть его в браузере как файл (не
-   обязательно даже подключать веб-сервер), чтобы события начали отправляться. Но перед этим нужно создать App, Container и Trigger. Про swagger написано ниже.
+   обязательно даже подключать веб-сервер), чтобы события начали отправляться. Но перед этим нужно
+   создать App, Container и Trigger. Про swagger написано ниже.
 2. [MessageController](src/main/java/com/mts/teta/enricher/controller/MessageController.java)
    принимает сообщение и обогащает его, делегируя
    вызов [EnricherService](src/main/java/com/mts/teta/enricher/process/EnricherService.java).
