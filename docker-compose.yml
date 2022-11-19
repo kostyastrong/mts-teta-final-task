@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: mts-teta-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mts-teta-database
+    ports:
+      - "5432:5432"
+
+  clickhouse:
+    container_name: mts-teta-clickhouse
+    image: yandex/clickhouse-server
+    environment:
+      CLICKHOUSE_USER: username
+      CLICKHOUSE_PASSWORD: password
+      CLICKHOUSE_DB: db
+    ports:
+      - "8123:8123"
