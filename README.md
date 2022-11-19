@@ -123,3 +123,31 @@ FROM db.event
 10. Открыть файл `index.html` в IDEA.
     1. Запустить его в браузере с помощью одной из иконок справа.
     2. Если у вас IDEA community, то можно просто открыть файл через любой браузер.
+
+## FAQ
+
+### Где задаётся, какие триггеры нужно подвешивать в js для index.html?
+
+1. Открываем
+   [ContainerController](src/main/java/com/mts/teta/tagmanager/controller/ContainerController.java)
+2. Далее смотрим метод `getContainerAsJsFile`. Именно он вызывается, когда
+   в [index.html](index.html) происходит запрос на получение скрипта (смотри тег `<script>`).
+3. В самом методе видим, что для
+   указанного [Container](src/main/java/com/mts/teta/tagmanager/domain/Container.java) запрашиваются
+   все существующие [Trigger](src/main/java/com/mts/teta/tagmanager/domain/Trigger.java). То есть
+   конкретные не выбираются. Мы просто получаем все, что есть.
+4. Ну и в конце для каждого `Trigger` вызывается приватный метод `triggerToJsString`. Там уже
+   формируется конкретный JS-код. Общий код для всех триггеров мы получаем конкатенацией все
+   полученных строковых блоков (вызов `Collectors.joining(";\n")`).
+5. Когда мы добавили новый тип `Trigger`, нужно, чтобы данные для нового типа `Trigger` как-то
+   попали в PostgreSQL. Для этого есть
+   endpoint [TriggerController.createTrigger](src/main/java/com/mts/teta/tagmanager/controller/TriggerController.java)
+   .
+6. Если мы с помощью него создадим `Trigger` с новым типом, то при
+   вызове `ContainerController.getContainerAsJsFile`, этот `Trigger` также будет подставлен. Важно,
+   что добавлять новый `Trigger` нужно для того же самого `containerId`, который указан у вас
+   в `index.html`.
+7. Еще важно отметить, что `ContainerController.getContainerAsJsFile` просто делегирует вызов для
+   каждого существующего `Trigger` для заданного `Container` в приватный метод `triggerToJsString`.
+   Если вы добавили новый тип `Trigger`, то в `triggerToJsString` вам нужно, добавить логику,
+   которая будет подставлять для нового типа `Trigger` соответствующий JS-код. 
