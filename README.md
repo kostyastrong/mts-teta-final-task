@@ -95,7 +95,7 @@ FROM db.event
    или [RabbitMQ](https://www.rabbitmq.com/). То есть, когда `MessageController` принимает
    сообщения, он отправляет его в очередь. А отдельно есть какой-то листенер, который читает
    сообщения из этой очереди и пишет их в Clickhouse.
-   
+
 ## Подробная инструкция по запуску проекта
 
 1. Установить [Docker](https://www.docker.com/)
@@ -106,11 +106,15 @@ FROM db.event
     1. Открыть pom.xml
     2. Нажать ПКМ -> Maven -> Reload project
 6. Запустить PostgreSQL и Clickhouse (смотрите инструкцию выше)
-    1. Проверить, что контейнеры запущены с помощью команды `docker ps -a`. Либо, если вы используется [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-    2. Если какая-то ошибка, проверьте, что Docker daemon запущен с помощью команды (если у вас Linux) `sudo systemctl status docker`. Сервис должен быть `active` и `enabled`.
-    3. Если Docker daemon выключен, запустить его можно с помощью команды Linux `sudo systemctl start docker`. Активировать – `sudo systemctl enable docker`.
+    1. Проверить, что контейнеры запущены с помощью команды `docker ps -a`. Либо, если вы
+       используется [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+    2. Если какая-то ошибка, проверьте, что Docker daemon запущен с помощью команды (если у вас
+       Linux) `sudo systemctl status docker`. Сервис должен быть `active` и `enabled`.
+    3. Если Docker daemon выключен, запустить его можно с помощью команды
+       Linux `sudo systemctl start docker`. Активировать – `sudo systemctl enable docker`.
 7. Запустить Spring Boot приложение из main: `src/main/java/com/mts/teta/DemoApplication.java`
-    1. При запуске появится уведомление `Lombok requires annotation pocessing`. Выбрать `Enable annotation pocessing`.
+    1. При запуске появится уведомление `Lombok requires annotation pocessing`.
+       Выбрать `Enable annotation pocessing`.
 8. Открыть `http://localhost:8080/swagger-ui.html`
 9. Создать изначальные сущности
     1. `POST /api/app -> Try it out -> name: [любое имя] -> Execute`
