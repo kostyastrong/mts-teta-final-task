@@ -67,7 +67,10 @@ public class Trigger {
   // Тип триггера. По умолчанию добавлен только SET_INTERVAL (как функция в Javascript),
   // но вы можете добавлять свои
   public enum TriggerType {
-    SET_INTERVAL
+    SET_INTERVAL,
+    CLICK,
+    SCROLL,
+    MOUSE_MOVE
   }
 
   public static Trigger newTrigger(

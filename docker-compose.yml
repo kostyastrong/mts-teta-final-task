@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mts-teta-database
     ports:
-      - "5432:5432"
+      - "1212:5432"
 
   clickhouse:
     container_name: mts-teta-clickhouse
