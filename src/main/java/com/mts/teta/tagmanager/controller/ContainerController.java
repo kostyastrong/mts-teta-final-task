@@ -176,6 +176,13 @@ public class ContainerController {
                     })()
                     """ .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
                     .replaceAll("\\{requestUrl}", requestUrl)
+                    .replaceAll(
+                            "\\{attributes}",
+                            // Здесь мы преобразуем Map<String, Object> в JSON, который и подставится в JSON.stringify
+                            objectMapper.writeValueAsString(
+                                    attributes.getMessageToSend()
+                            )
+                    )
                     .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
                     .replaceAll(
                             "\\{userId}",
@@ -213,6 +220,13 @@ public class ContainerController {
                     })()
                     """ .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
                     .replaceAll("\\{requestUrl}", requestUrl)
+                    .replaceAll(
+                            "\\{attributes}",
+                            // Здесь мы преобразуем Map<String, Object> в JSON, который и подставится в JSON.stringify
+                            objectMapper.writeValueAsString(
+                                    attributes.getMessageToSend()
+                            )
+                    )
                     .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
                     .replaceAll(
                             "\\{userId}",
