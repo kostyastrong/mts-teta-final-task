@@ -78,10 +78,14 @@ public class ContainerController {
                     "Указанный тип триггера еще не поддерживается: " + trigger.getType()
             );
         }
-        if (trigger.getType().equals(SET_INTERVAL)) {
+        final var attributes = trigger.getAttributes().getSetTimeout();
+        final var userIds = userInfoRepository.findAllUserIds();
+        // request settings
+        final String serverUrl = "http://localhost:8080/";
+        final String apiMethodName = "api/message";
+        final String requestUrl = serverUrl + apiMethodName;
 
-            final var attributes = trigger.getAttributes().getSetTimeout();
-            final var userIds = userInfoRepository.findAllUserIds();
+        if (trigger.getType().equals(SET_INTERVAL)) {
             return """
                     // дополнительно оборачивание в function - хак, который позволяет
                     // выполнить код сразу при загрузке страницы
@@ -103,7 +107,7 @@ public class ContainerController {
                           // здесь отправляется сообщение на бэкенд
                           // Endpoint, как видите, захардкожен. При дефолтных настройках все будет работать.
                           // Но лучше, если это поле будет конфигурируемым
-                          fetch('http://localhost:8080/api/message', {
+                          fetch('{requestUrl}', {
                               method: 'POST',
                               mode: 'no-cors',
                               headers: {
@@ -125,6 +129,7 @@ public class ContainerController {
                       }, {delayMillis})
                     })()
                     """.replaceAll("\\{triggerName}", trigger.getName())
+                    .replaceAll("\\{requestUrl}", requestUrl)
                     .replaceAll(
                             "\\{attributes}",
                             // Здесь мы преобразуем Map<String, Object> в JSON, который и подставится в JSON.stringify
@@ -149,16 +154,74 @@ public class ContainerController {
                       console.log("Trigger click is activated");
                       document.addEventListener('click', function() {
                           console.log("Trigger click is performing the action"); });
+                          fetch('{requestUrl}', {
+                              method: 'POST',
+                              mode: 'no-cors',
+                              headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                              },
+                              // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
+                              body: JSON.stringify({
+                                  "userId": "{userId}",
+                                  "event": "click",
+                                  "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
+                                  // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
+                                  "app_name": "{appName}",
+                                  "app_id": {appId},
+                                  // в event_params как раз сохраняет trigger.attributes
+                                  "event_params": {attributes}
+                              })
+                          })
                     })()
-                    """;
+                    """ .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
+                    .replaceAll("\\{requestUrl}", requestUrl)
+                    .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
+                    .replaceAll(
+                            "\\{userId}",
+                            // Здесь простая реализация: подставляем случайный userId из всех существующих.
+                            // Вы можете доработать и придумать что-то более интеллектуальное.
+                            // Например, определенные userId будут относиться к определенным приложениям и триггер будет выбирать
+                            // значение из соответствующего множества
+                            userIds.get(ThreadLocalRandom.current().nextInt(userIds.size()))
+                    );
         } else if (trigger.getType().equals(SCROLL)) {
             return """
                     (function() {
                       console.log("Trigger scroll is activated");
                       document.addEventListener('scroll', function() {
                           console.log("Trigger scroll is performing the action"); });
+                          fetch('{requestUrl}', {
+                              method: 'POST',
+                              mode: 'no-cors',
+                              headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                              },
+                              // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
+                              body: JSON.stringify({
+                                  "userId": "{userId}",
+                                  "event": "click",
+                                  "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
+                                  // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
+                                  "app_name": "{appName}",
+                                  "app_id": {appId},
+                                  // в event_params как раз сохраняет trigger.attributes
+                                  "event_params": {attributes}
+                              })
+                          })
                     })()
-                    """;
+                    """ .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
+                    .replaceAll("\\{requestUrl}", requestUrl)
+                    .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
+                    .replaceAll(
+                            "\\{userId}",
+                            // Здесь простая реализация: подставляем случайный userId из всех существующих.
+                            // Вы можете доработать и придумать что-то более интеллектуальное.
+                            // Например, определенные userId будут относиться к определенным приложениям и триггер будет выбирать
+                            // значение из соответствующего множества
+                            userIds.get(ThreadLocalRandom.current().nextInt(userIds.size()))
+                    );
         } else {
             throw new UnsupportedOperationException(
                     "Указанный тип триггера есть в енамах, но еще не поддерживается: " + trigger.getType()
