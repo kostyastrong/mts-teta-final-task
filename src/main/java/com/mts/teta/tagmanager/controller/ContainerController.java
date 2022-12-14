@@ -201,7 +201,7 @@ public class ContainerController {
                               // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                               body: JSON.stringify({
                                   "userId": "{userId}",
-                                  "event": "click",
+                                  "event": "scroll",
                                   "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
                                   // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
                                   "app_name": "{appName}",
