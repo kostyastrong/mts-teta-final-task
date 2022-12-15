@@ -27,7 +27,7 @@ public class TriggerScriptGenerator {
                       // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                       body: JSON.stringify({
                           "userId": "{userId}",
-                          event": "{eventType}",
+                          event: "{triggerName}",
                           "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
                           // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
                           "app_name": "{appName}",
@@ -61,15 +61,6 @@ public class TriggerScriptGenerator {
         };
     }
 
-    public String getTriggerEventType(Trigger trigger) {
-        return switch (trigger.getType()) {
-            case SET_INTERVAL -> "set_interval";
-            case CLICK -> "click";
-            case SCROLL -> "scroll";
-            default -> "default_type";
-        };
-    }
-
     public TriggerScriptGenerator(Trigger trigger, UserInfoRepository userInfoRepository, ObjectMapper objectMapper) throws JsonProcessingException {
         this.validateTrigger(trigger);
         final var attributes = trigger.getAttributes().getSetTimeout();
@@ -81,7 +72,6 @@ public class TriggerScriptGenerator {
         final String requestUrl = serverUrl + apiMethodName;
 
         String primaryFunction = getTriggerPrimaryFunction(trigger);
-        String eventType = getTriggerEventType(trigger);
 
         this.codeTemplate = this.codeTemplate
                 .replaceAll("\\{triggerName}", trigger.getName())
@@ -104,8 +94,7 @@ public class TriggerScriptGenerator {
                         // значение из соответствующего множества
                         userIds.get(ThreadLocalRandom.current().nextInt(userIds.size()))
                 )
-                .replaceAll("\\{primaryFunction}", primaryFunction)
-                .replaceAll("\\{eventType}", eventType);
+                .replaceAll("\\{primaryFunction}", primaryFunction);
     }
 
     public String getJavaScript() {
