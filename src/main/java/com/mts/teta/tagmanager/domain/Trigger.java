@@ -70,6 +70,7 @@ public class Trigger {
     SET_INTERVAL,
     CLICK,
     SCROLL,
+    BUTTON_CLICK,
     MOUSE_MOVE
   }
 

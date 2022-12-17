@@ -13,6 +13,10 @@ public class TriggerScriptGenerator {
             // дополнительно оборачивание в function - хак, который позволяет
             // выполнить код сразу при загрузке страницы
             (function() {
+                        
+              var elementName = null;
+              {beforePrimaryFunction}
+              
               console.log("Trigger {triggerName} is activated");
               {primaryFunction} {
                   console.log("Trigger {triggerName} is performing the action");
@@ -27,8 +31,8 @@ public class TriggerScriptGenerator {
                       // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                       body: JSON.stringify({
                           "userId": "{userId}",
-                          event: "{triggerName}",
-                          "element": null, // setInterval не привязан к какому-то конкретному элементу на странице
+                          "event": "{triggerName}",
+                          "element": elementName, // setInterval не привязан к какому-то конкретному элементу на странице
                           // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
                           "app_name": "{appName}",
                           "app_id": {appId},
@@ -37,6 +41,7 @@ public class TriggerScriptGenerator {
                       })
                   })
               }, {delayMillis})
+              {afterPrimaryFunction}
             })()
                         """;
 
@@ -50,15 +55,34 @@ public class TriggerScriptGenerator {
         }
     }
 
-    public String getTriggerPrimaryFunction(Trigger trigger) {
+    public String getPrimaryFunction(Trigger trigger) {
         return switch (trigger.getType()) {
             case SET_INTERVAL -> "setInterval(function()";
             case CLICK -> "document.addEventListener('click', function()";
             case SCROLL -> "document.addEventListener('scroll', function()";
+            case BUTTON_CLICK -> "button.addEventListener('click', function()";
             default -> throw new UnsupportedOperationException(
                     "Указанный тип триггера есть в enum, но еще не поддерживается: " + trigger.getType()
             );
         };
+    }
+
+    public String getBeforePrimaryFunction(Trigger trigger) {
+        if (trigger.getType().equals(Trigger.TriggerType.BUTTON_CLICK)) {
+            return """
+                    var buttons = document.querySelectorAll("button");
+                    for(var i = 0, len = buttons.length; i < len; i++) {
+                      button = buttons[i];
+                                      """;
+        }
+        return "";
+    }
+
+    public String getAfterPrimaryFunction(Trigger trigger) {
+        if (trigger.getType().equals(Trigger.TriggerType.BUTTON_CLICK)) {
+            return "}";
+        }
+        return "";
     }
 
     public TriggerScriptGenerator(Trigger trigger, UserInfoRepository userInfoRepository, ObjectMapper objectMapper) throws JsonProcessingException {
@@ -71,7 +95,9 @@ public class TriggerScriptGenerator {
         final String apiMethodName = "api/message";
         final String requestUrl = serverUrl + apiMethodName;
 
-        String primaryFunction = getTriggerPrimaryFunction(trigger);
+        String primaryFunction = getPrimaryFunction(trigger);
+        String beforePrimaryFunction = getBeforePrimaryFunction(trigger);
+        String afterPrimaryFunction = getAfterPrimaryFunction(trigger);
 
         this.codeTemplate = this.codeTemplate
                 .replaceAll("\\{triggerName}", trigger.getName())
@@ -94,7 +120,9 @@ public class TriggerScriptGenerator {
                         // значение из соответствующего множества
                         userIds.get(ThreadLocalRandom.current().nextInt(userIds.size()))
                 )
-                .replaceAll("\\{primaryFunction}", primaryFunction);
+                .replaceAll("\\{beforePrimaryFunction}", beforePrimaryFunction)
+                .replaceAll("\\{primaryFunction}", primaryFunction)
+                .replaceAll("\\{afterPrimaryFunction}", afterPrimaryFunction);
     }
 
     public String getJavaScript() {
