@@ -6,22 +6,19 @@ import com.mts.teta.tagmanager.controller.dto.ContainerCreatedResponse;
 import com.mts.teta.tagmanager.controller.dto.ContainerResponse;
 import com.mts.teta.tagmanager.domain.Container;
 import com.mts.teta.tagmanager.domain.Trigger;
-import com.mts.teta.tagmanager.domain.TriggerScriptGenerator;
+import com.mts.teta.tagmanager.domain.TriggerConstructor.TriggerScriptGenerator;
 import com.mts.teta.tagmanager.repository.AppRepository;
 import com.mts.teta.tagmanager.repository.ContainerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import static com.mts.teta.tagmanager.domain.Trigger.TriggerType.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
