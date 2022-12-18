@@ -4,15 +4,17 @@ import com.clickhouse.jdbc.ClickHouseDataSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mts.teta.enricher.process.EnrichedMessage;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Properties;
 
 /**
  * Реализация, которая сохряняет полученные сообщения в Clickhouse.
@@ -24,8 +26,14 @@ public class ClickhouseAnalyticDB implements AnalyticDB {
   private final ClickhouseWrapper wrapper;
   private final ObjectMapper objectMapper;
 
-  @Override
-  public void persistMessage(EnrichedMessage enrichedMessage) {
+  private EnrichedMessage stringToMessage(String msg) throws JsonProcessingException {
+    return objectMapper.readValue(msg, EnrichedMessage.class);
+  }
+
+  @KafkaListener(topics = "enriched_messages", groupId = "app.1")
+  @SneakyThrows
+  public void persistMessage(String msg) {
+    EnrichedMessage enrichedMessage = stringToMessage(msg);
     final var dataSource = wrapper.getDataSource();
     final var message = enrichedMessage.getMessage();
     try (final var connection = dataSource.getConnection()) {
