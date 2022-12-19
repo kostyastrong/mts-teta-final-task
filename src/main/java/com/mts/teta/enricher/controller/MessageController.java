@@ -3,7 +3,7 @@ package com.mts.teta.enricher.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mts.teta.enricher.Message;
 import com.mts.teta.enricher.db.AnalyticDB;
-import com.mts.teta.enricher.kafka.KafkaTopicConfig;
+import com.mts.teta.enricher.kafka.KafkaConfig;
 import com.mts.teta.enricher.process.EnrichedMessage;
 import com.mts.teta.enricher.process.EnricherService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class MessageController {
   public void sendMessage(EnrichedMessage message) {
 
     ListenableFuture<SendResult<String, EnrichedMessage>> future =
-            kafkaTemplate.send(KafkaTopicConfig.topicName, message);
+            kafkaTemplate.send(KafkaConfig.topicName, message);
 
 
     future.addCallback(new ListenableFutureCallback<SendResult<String, EnrichedMessage>>() {
