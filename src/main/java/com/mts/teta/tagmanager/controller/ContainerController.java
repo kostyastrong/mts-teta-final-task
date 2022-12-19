@@ -54,7 +54,10 @@ public class ContainerController {
     @Transactional
     public byte[] getContainerAsJsFile(@NotNull @PathVariable long containerId) {
         final var container = containerRepository.findById(containerId).orElseThrow();
-        final var jsFile = container.getTriggers().stream().map(this::triggerToJsString).collect(Collectors.joining(";\n"));
+        final var jsFile = container.getTriggers()
+                .stream()
+                .map(this::triggerToJsString)
+                .collect(Collectors.joining(";\n"));
         return jsFile.getBytes(UTF_8);
     }
 

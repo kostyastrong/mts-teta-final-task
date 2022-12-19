@@ -71,7 +71,9 @@ public class Trigger {
     CLICK,
     SCROLL,
     BUTTON_CLICK,
-    MOUSE_MOVE
+    MOUSE_MOVE,
+    FOCUS_IN,
+    FOCUS_OUT
   }
 
   public static Trigger newTrigger(

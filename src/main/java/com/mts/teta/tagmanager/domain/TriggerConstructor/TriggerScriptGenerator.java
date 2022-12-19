@@ -18,18 +18,20 @@ public class TriggerScriptGenerator {
             // Если будете добавлять новые типы триггеров, поддержку для них вам нужно будет
             // реализовать самостоятельно
             throw new UnsupportedOperationException(
-                    "Указанный тип триггера еще не поддерживается: " + trigger.getType()
-            );
+                    "Указанный тип триггера еще не поддерживается: " + trigger.getType());
         }
     }
 
     private void setCodeTemplate(Trigger trigger) {
-        if (trigger.getType().equals(Trigger.TriggerType.BUTTON_CLICK)) {
-            this.codeTemplate = TriggerScriptRepository.MultipleElementsTemplate;
-            this.targetType = TriggerTargetType.MULTIPLE_TARGET;
-        } else {
-            this.codeTemplate = TriggerScriptRepository.SimpleTemplate;
-            this.targetType = TriggerTargetType.SINGLE_TARGET;
+        switch (trigger.getType()) {
+            case BUTTON_CLICK, FOCUS_IN, FOCUS_OUT -> {
+                this.codeTemplate = TriggerScriptRepository.MultipleElementsTemplate;
+                this.targetType = TriggerTargetType.MULTIPLE_TARGET;
+            }
+            default -> {
+                this.codeTemplate = TriggerScriptRepository.SimpleTemplate;
+                this.targetType = TriggerTargetType.SINGLE_TARGET;
+            }
         }
     }
 
@@ -37,7 +39,7 @@ public class TriggerScriptGenerator {
         return switch (trigger.getType()) {
             case SET_INTERVAL -> "setInterval";
             case CLICK, SCROLL -> "document.addEventListener";
-            case BUTTON_CLICK -> "elements[i].addEventListener";
+            case BUTTON_CLICK, FOCUS_IN, FOCUS_OUT -> "elements[i].addEventListener";
             default -> "";
         };
     }
@@ -51,16 +53,19 @@ public class TriggerScriptGenerator {
     }
 
     private String getElementsSet(Trigger trigger) {
-        if (trigger.getType().equals(Trigger.TriggerType.BUTTON_CLICK)) {
-            return "document.querySelectorAll(\"button\")";
-        }
-        return "";
+        return switch (trigger.getType()) {
+            case BUTTON_CLICK -> "document.querySelectorAll(\"button\")";
+            case FOCUS_IN, FOCUS_OUT -> "document.querySelectorAll(\"input[type=text]\")";
+            default -> "";
+        };
     }
 
     private String getBeforeTriggerAttributes(Trigger trigger) {
         return switch (trigger.getType()) {
             case CLICK, BUTTON_CLICK -> "'click', ";
             case SCROLL -> "'scroll', ";
+            case FOCUS_IN -> "'focusin', ";
+            case FOCUS_OUT -> "'focusout', ";
             default -> "";
         };
     }
@@ -73,14 +78,15 @@ public class TriggerScriptGenerator {
     }
 
     private String getElementName(Trigger trigger) {
-        if (trigger.getType().equals(Trigger.TriggerType.BUTTON_CLICK)) {
-            return "eventObject.target.className";
-        }
-        return "null";
+        return switch (trigger.getType()) {
+            case BUTTON_CLICK, FOCUS_IN, FOCUS_OUT -> "eventObject.target.className";
+            default -> "null";
+        };
     }
 
 
-    public TriggerScriptGenerator(Trigger trigger, UserInfoRepository userInfoRepository, ObjectMapper objectMapper) throws JsonProcessingException {
+    public TriggerScriptGenerator(Trigger trigger, UserInfoRepository userInfoRepository, ObjectMapper objectMapper)
+            throws JsonProcessingException {
         this.validateTrigger(trigger);
         this.setCodeTemplate(trigger);
 
