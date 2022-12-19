@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="http://localhost:8080/api/container/1/jsFile" defer></script>
+  <link rel="stylesheet" href="../static/css/style.css">
+
+  <title>Костя хочет пиццу</title>
+
+  <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
+    <a class="navbar-brand" href="/">МТС Индастрис</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">
+            Домой
+          <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="www.mokeeva.ru">
+              Хочу статистику на свой сайт!
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+</head>
+<body>
+  <div class="content">
+      <h1>МТС Аналитика</h1>
+
+      <div class="books-content-block">
+          <div class="card">
+              <h3 class="card-title">Карточка</h3>
+              <div class="card-img-top-block">
+                  <img class="card-img-top" src="../static/img/sad_kostya.jpg" alt="Card image cap">
+              </div>
+              <div class="card-body">
+                  <div class="card-text-snippet">
+                      Костя ужасно устал и хочет пиццу.
+                  </div>
+                  <a href="{{ wiki_url_list[loop.index0] }}" class="btn btn-light btn-search" target="_blank" >Дать Косте пиццу</a>
+              </div>
+          </div>
+      </div>
+      <div class="books-content-block">
+          <div class="card">
+              <h3 class="card-title">Карточка</h3>
+              <div class="card-img-top-block">
+                  <img class="card-img-top" src="../static/img/sad_kostya.jpg" alt="Card image cap">
+              </div>
+              <div class="card-body">
+                  <div class="card-text-snippet">
+                      Костя всё ещё уставший и голодный.
+                  </div>
+                  <a href="{{ wiki_url_list[loop.index0] }}" class="btn btn-light btn-search" target="_blank" >Покормить беднягу</a>
+              </div>
+          </div>
+      </div>
+      <div class="books-content-block">
+          <div class="card">
+              <h3 class="card-title">Карточка</h3>
+              <div class="card-img-top-block">
+                  <img class="card-img-top" src="../static/img/mts-logo.png" alt="Card image cap">
+              </div>
+              <div class="card-body">
+                  <div class="card-text-snippet">
+                      А носки за вопросы будут?
+                  </div>
+                  <div>Выразите своё недовольство поведением Кости</div>
+                  <input type="text" id="name" name="name" size=35 class="input-field"
+                                               placeholder="Костя, ты очень плохо себя ведешь!">
+                  <a href="{{ wiki_url_list[loop.index0] }}" class="btn btn-light btn-search" target="_blank" >Аккуратно уйти от ответа.</a>
+              </div>
+          </div>
+      </div>
+      <div class="books-content-block">
+          <div class="card">
+              <h3 class="card-title">Карточка</h3>
+              <div class="card-img-top-block">
+                  <img class="card-img-top" src="../static/img/expressionless_kostya.jpg" alt="Card image cap">
+              </div>
+              <div class="card-body">
+                  <div class="card-text-snippet">
+                      Пасхалка
+                  </div>
+                  <a href="{{ wiki_url_list[loop.index0] }}" class="btn btn-light btn-search" target="_blank" >Не будет никаких носков!</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+</html>

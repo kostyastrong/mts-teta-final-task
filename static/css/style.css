@@ -1,0 +1,59 @@
+/* base content */
+body {
+  background: url("../img/new_background.jpg") 50% 50px fixed;
+}
+nav {
+    position: sticky;
+}
+.content {
+  width: 70%;
+  margin: auto;
+  margin-top: 50px;
+  font-size: 20px;
+  text-align: center;
+}
+h1 {
+  padding-bottom: 30px;
+  color: white;
+  margin: auto;
+}
+/* additional content */
+.card {
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 90%;
+    margin-left: 5%;
+}
+.card:hover {
+  background-color: rgba(180, 241, 244, 0.5);
+}
+.books-content-block {
+    padding-top: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    width: 90%;
+    padding-top: 2px;
+    margin: auto;
+}
+.card-img-top-block {
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 20px;
+}
+.card-body {
+    width: 90%;
+    margin-left: 5%;
+}
+.card-text-snippet {
+    margin-bottom: 15px;
+    font-style: italic;
+    font-weight: bold;
+}
+.btn-search {
+    width: 100%;
+    background-color: rgba(240, 240, 240, 0.9);
+    border-color: rgba(240, 240, 240, 0.9);
+}
+.input-field {
+    margin: 10px;
+}
