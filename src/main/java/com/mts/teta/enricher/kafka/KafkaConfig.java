@@ -1,5 +1,6 @@
 package com.mts.teta.enricher.kafka;
 
+import com.mts.teta.enricher.db.AnalyticDB;
 import com.mts.teta.enricher.process.EnrichedMessage;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -7,13 +8,13 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -21,6 +22,9 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
+    @Autowired
+    AnalyticDB analyticDB;
+
     public static final String topicName = "enriched_queue";
     @Value(value = "${spring.kafka.bootstrap-servers}")
     public String bootstrapAddress;
@@ -59,24 +63,16 @@ public class KafkaConfig {
 
     @Bean
     public ConsumerFactory<String, EnrichedMessage> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 bootstrapAddress);
-        props.put(
-                ConsumerConfig.GROUP_ID_CONFIG,
+        configs.put(ConsumerConfig.GROUP_ID_CONFIG,
                 "foo");
-//                UUID.randomUUID().toString());  // TODO why group id is random???
-        props.put(
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
-        props.put(
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(
-                props,
-                new StringDeserializer(),
-                new JsonDeserializer<>(EnrichedMessage.class));
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                KafkaMessageDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(configs);
     }
 
     @Bean
@@ -89,10 +85,11 @@ public class KafkaConfig {
     }
 
     @KafkaListener(topics = topicName, groupId = "foo")
-    public void listenGroupFoo(EnrichedMessage message) {
-        System.out.println(5);
-        System.out.println("Received Message in group foo: " + message.getMessage());
+    public void listenGroupFoo(EnrichedMessage enrichedMessage) {
+        System.out.println("Received Message in group foo: " + enrichedMessage.getMessage());
+        analyticDB.persistMessage(enrichedMessage);
 //        analyticDB.persistMessage(enrichedMessage);  // add bean
     }
 
 }
+

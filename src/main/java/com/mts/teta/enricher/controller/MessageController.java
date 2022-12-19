@@ -65,6 +65,6 @@ public class MessageController {
   public void acceptMessage(@NotNull @RequestBody String rawMessage) {
     final var message = new Message(objectMapper.readValue(rawMessage, Map.class));
     final var enrichedMessage = enricherService.enrich(message);
-    analyticDB.persistMessage(enrichedMessage);
+    sendMessage(enrichedMessage);
   }
 }
