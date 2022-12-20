@@ -64,10 +64,10 @@ public class TriggerScriptRepository {
                           "event": "{triggerName}",
                           "element": {elementName}, // setInterval не привязан к какому-то конкретному элементу на странице
                           // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
-                          "app_name": "{appName}",
-                          "app_id": {appId},
-                          // в event_params как раз сохраняет trigger.attributes
-                          "event_params": {eventAttributes}
+                          "appName": "{appName}",
+                          "appId": "{appId}",
+                          // в eventParams как раз сохраняет trigger.attributes
+                          "eventParams": {eventAttributes}
                       })
                   })
               } {afterTriggerAttributes})
@@ -142,10 +142,10 @@ public class TriggerScriptRepository {
                       "event": "{triggerName}",
                       "element": {elementName}, // setInterval не привязан к какому-то конкретному элементу на странице
                       // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
-                      "app_name": "{appName}",
-                      "app_id": {appId},
+                      "appName": "{appName}",
+                      "appId": "{appId}",
                       // в event_params как раз сохраняет trigger.attributes
-                      "event_params": {eventAttributes}
+                      "eventParams": {eventAttributes}
                     })
                    })
                   {afterPrimaryFunction}
