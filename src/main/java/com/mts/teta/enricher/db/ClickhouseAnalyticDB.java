@@ -4,20 +4,23 @@ import com.clickhouse.jdbc.ClickHouseDataSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mts.teta.enricher.process.EnrichedMessage;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Properties;
+
 /**
  * Реализация, которая сохряняет полученные сообщения в Clickhouse.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ClickhouseAnalyticDB implements AnalyticDB {
 
@@ -37,7 +40,8 @@ public class ClickhouseAnalyticDB implements AnalyticDB {
       statement.setString(2, message.getEvent());
       statement.setString(3, message.getElement());
       statement.setString(4, message.getAppName());
-      statement.setLong(5, message.getAppId());
+      log.info(enrichedMessage.getMessage().toString());
+      statement.setString(5, message.getAppId());
       statement.setString(
           6,
           objectMapper.writeValueAsString(message.getEventParams())

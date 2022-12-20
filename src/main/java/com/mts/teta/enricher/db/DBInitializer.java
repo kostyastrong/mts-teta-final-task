@@ -30,7 +30,7 @@ class DBInitializer {
                 event TEXT,
                 element TEXT,
                 app_name TEXT,
-                app_id UInt64,
+                app_id TEXT,
                 event_params TEXT,
                 server_timestamp Datetime,
                 msisdn TEXT

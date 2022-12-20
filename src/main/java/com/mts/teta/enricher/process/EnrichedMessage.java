@@ -1,14 +1,16 @@
 package com.mts.teta.enricher.process;
 
 import com.mts.teta.enricher.Message;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @EqualsAndHashCode
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class EnrichedMessage {
-  private final Message message;
-  private final String msisdn;
+  private  Message message;
+  private  String msisdn;
 }
