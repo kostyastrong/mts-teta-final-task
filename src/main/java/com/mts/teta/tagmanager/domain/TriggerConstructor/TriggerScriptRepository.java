@@ -46,6 +46,31 @@ public class TriggerScriptRepository {
             // дополнительно оборачивание в function - хак, который позволяет
             // выполнить код сразу при загрузке страницы
             (function() {
+              function setCookie(cname, cvalue) {
+                const d = new Date();
+                d.setTime(d.getTime() + (10*24*60*60*1000));  // 10
+                let expires = "expires="+ d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+              }
+              
+              function getCookie(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for(let i = 0; i <ca.length; i++) {
+                  let c = ca[i];
+                  while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                  }
+                  if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                  }
+                }
+                //let num = Math.floor(Math.random()).toString();
+                let num = '2';
+                setCookie("userId", num);
+                return num.toString();
+              }
               {beforePrimaryFunction}
               console.log("Trigger {triggerName} is activated");
               {primaryFunction}({beforeTriggerAttributes} function(eventObject) {
@@ -60,7 +85,7 @@ public class TriggerScriptRepository {
                       },
                       // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                       body: JSON.stringify({
-                          "userId": "{userId}",
+                          "userId": getCookie("userId"),
                           "event": "{triggerName}",
                           "element": {elementName}, // setInterval не привязан к какому-то конкретному элементу на странице
                           // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие
@@ -122,6 +147,32 @@ public class TriggerScriptRepository {
             // дополнительно оборачивание в function - хак, который позволяет
             // выполнить код сразу при загрузке страницы
             (function() {
+              function setCookie(cname, cvalue) {
+                const d = new Date();
+                d.setTime(d.getTime() + (10*24*60*60*1000));  // 10
+                let expires = "expires="+ d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+              }
+              
+              function getCookie(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for(let i = 0; i <ca.length; i++) {
+                  let c = ca[i];
+                  while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                  }
+                  if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                  }
+                }
+                //let num = Math.floor(Math.random()).toString();
+                let num = '2';
+                setCookie("userId", num);
+                return num.toString();
+              }
+              
               var elements = {elementsSet};
               console.log("Trigger {triggerName} is activated");
               for (var i = 0, len = elements.length; i < len; i++) {
@@ -138,7 +189,7 @@ public class TriggerScriptRepository {
                     },
                     // к trigger.attributes прибавляем еще кастомные атрибуты: userId, event, element, app
                     body: JSON.stringify({
-                      "userId": "{userId}",
+                      "userId": getCookie("userId"),
                       "event": "{triggerName}",
                       "element": {elementName}, // setInterval не привязан к какому-то конкретному элементу на странице
                       // информация о приложении нужна, чтобы мы понимали, к кому относится данное событие

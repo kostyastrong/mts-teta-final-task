@@ -14,6 +14,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +63,7 @@ public class MessageController {
   // Важно, что здесь мы принимаем любой JSON, а не какой-то конкретный формат.
   // Потому что со временем формат сообщений может меняться, да и клиенты нашей платформы
   // могут отправлять нам не структированные сообщения. Мы все равно должны их все принимать и не отвечать ошибкой.
-  public void acceptMessage(@NotNull @RequestBody String rawMessage) {
+  public void acceptMessage(@NotNull @RequestBody String rawMessage, @CookieValue(value = "userId", defaultValue = "0") String userId) {
     final var message = new Message(objectMapper.readValue(rawMessage, Map.class));
     final var enrichedMessage = enricherService.enrich(message);
     sendMessage(enrichedMessage);

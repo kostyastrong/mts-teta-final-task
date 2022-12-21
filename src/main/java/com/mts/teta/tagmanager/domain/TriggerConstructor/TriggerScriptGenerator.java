@@ -3,9 +3,6 @@ package com.mts.teta.tagmanager.domain.TriggerConstructor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mts.teta.enricher.cache.UserInfoRepository;
-
-import java.util.concurrent.ThreadLocalRandom;
-
 import com.mts.teta.tagmanager.domain.Trigger;
 import org.apache.commons.lang3.EnumUtils;
 
@@ -113,7 +110,7 @@ public class TriggerScriptGenerator {
                 .replaceAll("\\{eventAttributes}", objectMapper.writeValueAsString(attributes.getMessageToSend()))
                 .replaceAll("\\{appName}", trigger.getContainer().getApp().getName())
                 .replaceAll("\\{appId}", String.valueOf(trigger.getContainer().getApp().getId()))
-                .replaceAll("\\{userId}", userIds.get(ThreadLocalRandom.current().nextInt(userIds.size())))
+//                .replaceAll("\\{userId}", "getCookie(\"userId\")")
                 .replaceAll("\\{beforePrimaryFunction}", beforePrimaryFunction)
                 .replaceAll("\\{primaryFunction}", primaryFunction)
                 .replaceAll("\\{afterPrimaryFunction}", afterPrimaryFunction)
