@@ -1,12 +1,12 @@
 /* base content */
 body {
-  background: url("../img/new_background.jpg") 50% 50px fixed;
+  background: url("../img/mts-logo-white.png") 50% 50px fixed;
 }
 nav {
     position: sticky;
 }
 .content {
-  width: 70%;
+  width: 50%;
   margin: auto;
   margin-top: 50px;
   font-size: 20px;
