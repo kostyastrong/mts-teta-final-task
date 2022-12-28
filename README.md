@@ -1,4 +1,4 @@
-# MTS Teta Final Task Template
+# MtsAnalytics_3
 
 Состав команды:
 - Константин Больщиков;
@@ -12,22 +12,47 @@
 
 ## Кратко о запуске
 
-Для запуска требуется [PostgreSQL](https://www.postgresql.org/)
-и [Clickhouse](https://clickhouse.com/).
+Проект написан на языке Java с использованием библиотеки SpringBoot. Для запуска
+требуется требуется Maven, Java 17 версии и выше, Docker.
 
-Docker-команды:
+Docker-compose задействует [PostgreSQL](https://www.postgresql.org/), 
+[Clickhouse](https://clickhouse.com/) и [Apache Kafka](https://kafka.apache.org/).
 
+### Инструкция к запуску:
+1. Запуск Docker и Java.
 ```shell
-# Postgres
-docker run --name mts-teta-postgres -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=mts-teta-database -p 5432:5432 -d postgres
+# Проверьте, что вы находитесь в ~/path/to/project/mts-teta-final-task
 
-# Clickhouse
-docker run --name mts-teta-clickhouse -e CLICKHOUSE_DB=db -e CLICKHOUSE_USER=username -e CLICKHOUSE_PASSWORD=password -p 8123:8123 -d yandex/clickhouse-server
+# 1. Docker compose
+# Файл docker-compose.yml приложен в репозитории
+docker-compose up # может потребоваться дописать первой командой sudo для некоторых систем
+
+# 2. Java run with Maven
+mvn compile exec:java -Dexec.mainClass=com.mts.teta.MainApplication
+# Вы также можете запустить приложение привычным образом, запустив его в IDE.
 ```
+2. С помощью [swagger](http://localhost:8080/swagger-ui.html) создайте приложение, затем контейнер, наполните последний триггерами.
+Из доступных триггеров сейчас есть:
+- SET_INTERVAL;
+- CLICK;
+- SCROLL;
+- BUTTON_CLICK;
+- MOUSE_MOVE;
+- FOCUS_IN;
+- FOCUS_OUT.
+3. В заголовках вашей тестовой страницы укажите:
+```javascript
+<script src="http://localhost:8080/api/container/1/jsFile" defer></script>
+```
+4. Запустите тестовую страницу, выполните действия, активирующие выбранные триггеры.
+5. Перейдите в [Clickhouse](http://localhost:8123/play), выполните следующий запрос. Вы должны увидеть записи об активированных триггерах.
+```sql
+SELECT *
+FROM db.event
+```
+---
 
-Либо можно воспользоваться конфигурацией для [Docker Compose](https://docs.docker.com/compose/)
-. [Файл приложен в репозитории](docker-compose.yml). Для запуска достаточно выполнить
-команду `docker-compose up`, находясь в той же директории, где и файл `docker-compose.yml`
+# Указания maintainer\`a шаблона Семёна Кирекова
 
 К Postgres можно цепляться через [DBeaver](https://dbeaver.io/). К Clickhouse тоже, но также
 доступен web-интерфейс в браузере по ссылке [http://localhost:8123/play](http://localhost:8123/play)
